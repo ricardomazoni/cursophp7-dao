@@ -6,6 +6,14 @@ class Usuario {
 	private $dessenha;
 	private $dtcadastro;
 
+
+	//Construtor vazio, se não passsar parametro vai ficar em branco.
+	public function __construct($login="",$password=""){
+		$this->setDeslogin($login);
+		$this->setDessenha($password);
+
+	}
+
 	public function getIdusuario(){
 		return $this->idusuario;
 	}
@@ -45,12 +53,7 @@ class Usuario {
 		));
 
 		if(count($results)>0){
-			$row = $results[0];
-
-			$this->setIdusuario($row['idusuario']);
-			$this->setDeslogin($row['deslogin']);
-			$this->setDessenha($row['dessenha']);
-			$this->setDtcadastro(new DateTime($row['dtcadastro']));
+			$this->setData($results[0]);
 		}
 
 
@@ -85,18 +88,52 @@ class Usuario {
 		));
 
 		if(count($results)>0){
-			$row = $results[0];
+			$this->setData($results[0]);
 
-			$this->setIdusuario($row['idusuario']);
-			$this->setDeslogin($row['deslogin']);
-			$this->setDessenha($row['dessenha']);
-			$this->setDtcadastro(new DateTime($row['dtcadastro']));
 		}else{
 			throw new Exception("Login e/ou senha invalidos");
 			
 		}
 
 
+	}
+
+	public function setData($row){
+
+			$this->setIdusuario($row['idusuario']);
+			$this->setDeslogin($row['deslogin']);
+			$this->setDessenha($row['dessenha']);
+			$this->setDtcadastro(new DateTime($row['dtcadastro']));
+
+	}
+
+	public function insert(){
+
+		$sql = new Sql();
+
+		$results = $sql->select("CALL sp_usuarios_insert(:LOGIN, :PASSWORD)",array(
+			":LOGIN"=>$this->getDeslogin(),
+			":PASSWORD"=>$this->getDessenha()
+
+		));
+
+		if (count($results)>0){
+			$this->setData($results[0]);
+		}
+	}
+
+	public function update($login,$password){
+
+		$this->setDeslogin($login);
+		$this->setDessenha($password);
+
+		$sql = new Sql();
+
+		$sql->query("UPDATE tb_usuarios SET deslogin = :LOGIN, dessenha = :PASSWORD WHERE idusuario = :ID",array(
+			':LOGIN'=>$this->getDeslogin(),
+			':PASSWORD'=>$this->getDessenha(),
+			':ID'=>$this->getIdusuario()
+		));
 	}
 
 

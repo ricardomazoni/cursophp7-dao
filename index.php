@@ -29,13 +29,30 @@ echo json_encode($search);
 
 //carrega o usuario usando usu e a senha
 
+/*
 $usuario = new Usuario();
 
 $usuario->login("jojo","12345");
 
 echo $usuario;
 
+*/
 
+/*
+//Insert com procedure do BD
+$aluno = new Usuario("wagner","12345");
+
+$aluno->insert();
+
+echo $aluno;
+*/
+
+$usuario = new Usuario();
+
+$usuario-> loadById(6);
+$usuario->update("joelma","89898");
+
+echo $usuario;
 
 
 
